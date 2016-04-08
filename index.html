@@ -167,7 +167,39 @@ compute_mean[[&quot;sum&quot;]]()
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark" id="slide-8" style="background:;">
+<slide class="" id="slide-8" style="background:;">
+  <hgroup>
+    <h2>FP的效率</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">x &lt;- c()
+system.time({
+    for(i in 1:100000){
+      if(i %% 2 ==0)
+        x &lt;- c(x,i)
+    } 
+})
+</code></pre>
+
+<pre><code>##    user  system elapsed 
+##   4.475   0.608   5.089
+</code></pre>
+
+<pre><code class="r">system.time({
+  x &lt;- 1:100000
+  x[x %% 2 == 0]
+})
+</code></pre>
+
+<pre><code>##    user  system elapsed 
+##   0.002   0.001   0.003
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark" id="slide-9" style="background:;">
   <hgroup>
     <h2>R中的管道操作</h2>
   </hgroup>
@@ -177,7 +209,7 @@ compute_mean[[&quot;sum&quot;]]()
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-9" style="background:;">
+<slide class="" id="slide-10" style="background:;">
   <hgroup>
     <h2>管道操作</h2>
   </hgroup>
@@ -196,7 +228,7 @@ compute_mean[[&quot;sum&quot;]]()
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-10" style="background:;">
+<slide class="" id="slide-11" style="background:;">
   <hgroup>
     <h2>自定义的管道</h2>
   </hgroup>
@@ -214,7 +246,7 @@ compute_mean[[&quot;sum&quot;]]()
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-11" style="background:;">
+<slide class="" id="slide-12" style="background:;">
   <article data-timings="">
     <pre><code class="r">library(magrittr)
 rnorm(10000,mean=10,sd=1) %&gt;&gt;% 
@@ -225,13 +257,13 @@ rnorm(10000,mean=10,sd=1) %&gt;&gt;%
     main=sprintf(&quot;length: %d&quot;,length(.)))
 </code></pre>
 
-<p><img src="assets/fig/unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7"> </p>
+<p><img src="assets/fig/unnamed-chunk-8-1.png" alt="plot of chunk unnamed-chunk-8"> </p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark" id="slide-12" style="background:;">
+<slide class="segue dark" id="slide-13" style="background:;">
   <hgroup>
     <h2>R apply家族</h2>
   </hgroup>
@@ -241,7 +273,7 @@ rnorm(10000,mean=10,sd=1) %&gt;&gt;%
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-13" style="background:;">
+<slide class="" id="slide-14" style="background:;">
   <hgroup>
     <h2>替代for的高效函数</h2>
   </hgroup>
@@ -257,7 +289,7 @@ rnorm(10000,mean=10,sd=1) %&gt;&gt;%
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-14" style="background:;">
+<slide class="" id="slide-15" style="background:;">
   <hgroup>
     <h2>apply(X,margin,FUN)</h2>
   </hgroup>
@@ -288,7 +320,7 @@ apply(x, c(1,2), FUN = paste,collapse =&quot;,&quot;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-15" style="background:;">
+<slide class="" id="slide-16" style="background:;">
   <hgroup>
     <h2>lapply(X,FUN)和sapply(X,FUN)</h2>
   </hgroup>
@@ -320,7 +352,7 @@ head(sapply(temp,as.character))
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-16" style="background:;">
+<slide class="" id="slide-17" style="background:;">
   <article data-timings="">
     <pre><code class="r">funs2 &lt;- list(
   sum = function(x, ...) sum(x, ..., na.rm = TRUE),
@@ -334,7 +366,7 @@ lapply(funs2, function(f) f(x))
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-17" style="background:;">
+<slide class="" id="slide-18" style="background:;">
   <hgroup>
     <h2>Mapply(FUN,....,MoreArg = ,....)</h2>
   </hgroup>
@@ -367,26 +399,36 @@ paste0(res,test)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-18" style="background:;">
+<slide class="" id="slide-19" style="background:;">
   <hgroup>
     <h2>rollapply</h2>
   </hgroup>
   <article data-timings="">
     <pre><code class="r">library(zoo)
-z &lt;- rnorm(6)
+</code></pre>
+
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;
+## 
+## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric
+</code></pre>
+
+<pre><code class="r">z &lt;- rnorm(6)
 rollapply(z, 2, sum)
 </code></pre>
 
-<pre><code>## [1] -1.6605202 -3.6657001 -1.3068213  1.1257449  0.8592158
+<pre><code>## [1]  0.8225873  2.0785559 -0.6813391 -1.9719372 -0.4199782
 </code></pre>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-19" style="background:;">
+<slide class="" id="slide-20" style="background:;">
   <hgroup>
-    <h2>bootstrap 抽样</h2>
+    <h2>案例1：bootstrap 抽样</h2>
   </hgroup>
   <article data-timings="">
     <pre><code class="r">boot_lm &lt;- function(formula,data,...){
@@ -397,16 +439,89 @@ rollapply(z, 2, sum)
 }
 
 iris_boot &lt;- boot_lm(Sepal.Length ~ Petal.Length,iris)
-bstrap &lt;- sapply(X= 1:10000,
+bstrap &lt;- sapply(X= 1:1000,
                  FUN = function(x) iris_boot()$coef)
 apply(bstrap,MARGIN = 1,FUN = quantile,prob =c(0.025,0.5,0.975))
+</code></pre>
+
+<pre><code>##       (Intercept) Petal.Length
+## 2.5%     4.163022    0.3718770
+## 50%      4.305461    0.4095615
+## 97.5%    4.446607    0.4439611
 </code></pre>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark" id="slide-20" style="background:;">
+<slide class="" id="slide-21" style="background:;">
+  <hgroup>
+    <h2>案例2：担保链分析中的递归</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">findCon = function(uid,friends.connected,friends.whole){
+  tmp=c()
+  for(i in friends.connected){
+    for(j in 1:length(i)){
+      tmp1 = unique(rbind(friends.whole[friends.whole$to == i[j],],friends.whole[friends.whole$from == i[j],]))
+      tmp = unique(rbind(tmp,tmp1))
+    }
+  }
+  if(dim(unique(rbind(tmp,friends.connected)))[1] == dim(friends.connected)[1]){
+    return(friends.connected)
+  }else {
+    friends.connected=unique(rbind(tmp,friends.connected))
+    findCon(uid, friends.connected,friends.whole)
+  }
+}
+uid=&quot;20111214000138&quot;
+system.time({
+friends.connected = unique(rbind(friends.whole[friends.whole$to ==uid,],friends.whole[friends.whole$from == uid,]))
+friends.1=findCon(uid,friends.connected,friends.whole)
+friends.1=friends.1[complete.cases(friends.1),]
+})
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-22" style="background:;">
+  <article data-timings="">
+    <pre><code class="r">friends.whole&lt;-read.table(&quot;data.csv&quot;,header=T,sep=&quot;,&quot;,col.names=c(&quot;from&quot;,&quot;to&quot;))
+findCon1 = function(friends.connected,friends.whole){
+  index &lt;- 1:nrow(friends.whole)
+  len1 &lt;- nrow(as.data.frame(friends.connected))
+  index_target &lt;- unique(unlist(as.list((friends.connected))))
+  tmp &lt;- sapply(friends.whole,function(x,y) y[x %in% index_target],index) %&gt;%
+                unlist() %&gt;%
+                unique()
+  friends.connected &lt;- friends.whole[tmp,]
+  if(nrow(friends.connected) == len1){
+    return(friends.connected)
+  }else {
+    findCon1(friends.connected,friends.whole)
+  }
+}
+uid=&quot;20111214000138&quot;
+system.time({friends.1=findCon1(uid,friends.whole) %&gt;%
+            unique()
+})
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-23" style="background:;">
+  <article data-timings="">
+    <p><img src="./assets/fig/xiaoguo.png" alt="效果对比"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="segue dark" id="slide-24" style="background:;">
   <hgroup>
     <h2>R的数据获取，web scraping</h2>
   </hgroup>
@@ -416,7 +531,7 @@ apply(bstrap,MARGIN = 1,FUN = quantile,prob =c(0.025,0.5,0.975))
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-21" style="background:;">
+<slide class="" id="slide-25" style="background:;">
   <article data-timings="">
     <ul>
 <li>XML package 结构化网页数据抓取</li>
@@ -427,7 +542,7 @@ apply(bstrap,MARGIN = 1,FUN = quantile,prob =c(0.025,0.5,0.975))
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-22" style="background:;">
+<slide class="" id="slide-26" style="background:;">
   <hgroup>
     <h2>结构化网页数据抓取:XML package</h2>
   </hgroup>
@@ -458,7 +573,7 @@ head(data,2)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-23" style="background:;">
+<slide class="" id="slide-27" style="background:;">
   <hgroup>
     <h2>非结构化数据的获取:rvest package</h2>
   </hgroup>
@@ -480,7 +595,7 @@ freak %&gt;%
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark" id="slide-24" style="background:;">
+<slide class="segue dark" id="slide-28" style="background:;">
   <hgroup>
     <h2>特征工程和数据预处理</h2>
   </hgroup>
@@ -490,7 +605,7 @@ freak %&gt;%
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-25" style="background:;">
+<slide class="" id="slide-29" style="background:;">
   <hgroup>
     <h2>reshape2</h2>
   </hgroup>
@@ -500,7 +615,7 @@ freak %&gt;%
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-26" style="background:;">
+<slide class="" id="slide-30" style="background:;">
   <hgroup>
     <h2>数据的两种形状</h2>
   </hgroup>
@@ -523,7 +638,7 @@ data_w &lt;- unstack(data_l)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-27" style="background:;">
+<slide class="" id="slide-31" style="background:;">
   <hgroup>
     <h2>数据的两种形状</h2>
   </hgroup>
@@ -543,7 +658,7 @@ colMeans(data_w)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-28" style="background:;">
+<slide class="" id="slide-32" style="background:;">
   <hgroup>
     <h2>数据重塑计算</h2>
   </hgroup>
@@ -569,7 +684,7 @@ dcast(data=subdata,             # 分析对象
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-29" style="background:;">
+<slide class="" id="slide-33" style="background:;">
   <hgroup>
     <h2>数据重塑计算</h2>
   </hgroup>
@@ -586,7 +701,7 @@ dcast(data=subdata,             # 分析对象
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-30" style="background:;">
+<slide class="" id="slide-34" style="background:;">
   <hgroup>
     <h2>数据重塑计算</h2>
   </hgroup>
@@ -608,7 +723,7 @@ dcast(data=subdata,             # 分析对象
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-31" style="background:;">
+<slide class="" id="slide-35" style="background:;">
   <hgroup>
     <h2>小练习</h2>
   </hgroup>
@@ -637,7 +752,7 @@ dcast(data=subdata,             # 分析对象
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-32" style="background:;">
+<slide class="" id="slide-36" style="background:;">
   <hgroup>
     <h2>dcast函数的使用前提</h2>
   </hgroup>
@@ -652,7 +767,7 @@ dcast(data=subdata,             # 分析对象
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-33" style="background:;">
+<slide class="" id="slide-37" style="background:;">
   <hgroup>
     <h2>更复杂的需求</h2>
   </hgroup>
@@ -692,7 +807,7 @@ dcast(data = tips_melt, sex ~ variable, value.var=&#39;value&#39;,fun= mean)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-34" style="background:;">
+<slide class="" id="slide-38" style="background:;">
   <hgroup>
     <h2>更复杂的需求</h2>
   </hgroup>
@@ -717,7 +832,7 @@ tips_mean
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-35" style="background:;">
+<slide class="" id="slide-39" style="background:;">
   <hgroup>
     <h2>时间相关数据的类别</h2>
   </hgroup>
@@ -731,7 +846,7 @@ tips_mean
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-36" style="background:;">
+<slide class="" id="slide-40" style="background:;">
   <hgroup>
     <h2>时间类对象</h2>
   </hgroup>
@@ -745,7 +860,7 @@ tips_mean
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-37" style="background:;">
+<slide class="" id="slide-41" style="background:;">
   <hgroup>
     <h2>Date类型</h2>
   </hgroup>
@@ -768,7 +883,7 @@ date1 &lt;- as.Date(date1,format=&#39;%m/%d/%Y&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-38" style="background:;">
+<slide class="" id="slide-42" style="background:;">
   <hgroup>
     <h2>Date类型</h2>
   </hgroup>
@@ -792,7 +907,7 @@ date2 - date1
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-39" style="background:;">
+<slide class="" id="slide-43" style="background:;">
   <hgroup>
     <h2>Date类型</h2>
   </hgroup>
@@ -826,7 +941,7 @@ format(dates, &#39;%w&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-40" style="background:;">
+<slide class="" id="slide-44" style="background:;">
   <hgroup>
     <h2>POSIXct类型</h2>
   </hgroup>
@@ -847,7 +962,7 @@ time2 &lt;- seq(from=time1,to=Sys.time(),by=&#39;month&#39;)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-41" style="background:;">
+<slide class="" id="slide-45" style="background:;">
   <hgroup>
     <h2>POSIXct类型</h2>
   </hgroup>
@@ -864,7 +979,7 @@ rtimes &lt;- ISOdatetime(2013, rep(4:5,5), sample(30,10), 0, 0, 0)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark" id="slide-42" style="background:;">
+<slide class="segue dark" id="slide-46" style="background:;">
   <hgroup>
     <h2>字符串处理</h2>
   </hgroup>
@@ -874,7 +989,7 @@ rtimes &lt;- ISOdatetime(2013, rep(4:5,5), sample(30,10), 0, 0, 0)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-43" style="background:;">
+<slide class="" id="slide-47" style="background:;">
   <hgroup>
     <h2>字符串处理概要</h2>
   </hgroup>
@@ -894,7 +1009,7 @@ rtimes &lt;- ISOdatetime(2013, rep(4:5,5), sample(30,10), 0, 0, 0)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-44" style="background:;">
+<slide class="" id="slide-48" style="background:;">
   <hgroup>
     <h2>获取字符串长度</h2>
   </hgroup>
@@ -912,7 +1027,7 @@ nchar(fruit)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-45" style="background:;">
+<slide class="" id="slide-49" style="background:;">
   <hgroup>
     <h2>字符串分割</h2>
   </hgroup>
@@ -933,7 +1048,7 @@ nchar(fruit)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-46" style="background:;">
+<slide class="" id="slide-50" style="background:;">
   <hgroup>
     <h2>字符串拼接</h2>
   </hgroup>
@@ -950,7 +1065,7 @@ nchar(fruit)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-47" style="background:;">
+<slide class="" id="slide-51" style="background:;">
   <hgroup>
     <h2>字符串截取</h2>
   </hgroup>
@@ -967,7 +1082,7 @@ nchar(fruit)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-48" style="background:;">
+<slide class="" id="slide-52" style="background:;">
   <hgroup>
     <h2>字符串替代</h2>
   </hgroup>
@@ -984,7 +1099,7 @@ nchar(fruit)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-49" style="background:;">
+<slide class="" id="slide-53" style="background:;">
   <hgroup>
     <h2>字符串匹配</h2>
   </hgroup>
@@ -1001,7 +1116,7 @@ nchar(fruit)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-50" style="background:;">
+<slide class="" id="slide-54" style="background:;">
   <hgroup>
     <h2>dplyr(<a href="http://hadley.nz/">hadley</a>)</h2>
   </hgroup>
@@ -1011,7 +1126,7 @@ nchar(fruit)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-51" style="background:;">
+<slide class="" id="slide-55" style="background:;">
   <article data-timings="">
     <ul>
 <li>filter() (and slice())</li>
@@ -1027,7 +1142,7 @@ nchar(fruit)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-52" style="background:;">
+<slide class="" id="slide-56" style="background:;">
   <article data-timings="">
     <pre><code class="r">library(nycflights13)
 dim(flights)
@@ -1058,7 +1173,7 @@ head(flights)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-53" style="background:;">
+<slide class="" id="slide-57" style="background:;">
   <hgroup>
     <h2>filter() 和slice()</h2>
   </hgroup>
@@ -1092,7 +1207,7 @@ head(flights)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-54" style="background:;">
+<slide class="" id="slide-58" style="background:;">
   <hgroup>
     <h2>arrange</h2>
   </hgroup>
@@ -1123,7 +1238,7 @@ head(flights)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-55" style="background:;">
+<slide class="" id="slide-59" style="background:;">
   <hgroup>
     <h2>select() (and rename())</h2>
   </hgroup>
@@ -1174,7 +1289,7 @@ head(flights)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-56" style="background:;">
+<slide class="" id="slide-60" style="background:;">
   <hgroup>
     <h2>distinct()</h2>
   </hgroup>
@@ -1203,7 +1318,7 @@ head(flights)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-57" style="background:;">
+<slide class="" id="slide-61" style="background:;">
   <hgroup>
     <h2>mutate() (and transmute())</h2>
   </hgroup>
@@ -1238,7 +1353,7 @@ head(flights)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-58" style="background:;">
+<slide class="" id="slide-62" style="background:;">
   <hgroup>
     <h2>summarise()</h2>
   </hgroup>
@@ -1264,7 +1379,7 @@ head(flights)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-59" style="background:;">
+<slide class="" id="slide-63" style="background:;">
   <article data-timings="">
     <p>##sample_n() and sample_frac()</p>
 
@@ -1275,7 +1390,7 @@ head(flights)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-60" style="background:;">
+<slide class="" id="slide-64" style="background:;">
   <hgroup>
     <h2>group operations</h2>
   </hgroup>
@@ -1292,7 +1407,7 @@ delay &lt;- filter(delay, count &gt; 20, dist &lt; 2000)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-61" style="background:;">
+<slide class="" id="slide-65" style="background:;">
   <hgroup>
     <h2>chain</h2>
   </hgroup>
@@ -1322,7 +1437,7 @@ delay &lt;- filter(delay, count &gt; 20, dist &lt; 2000)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-62" style="background:;">
+<slide class="" id="slide-66" style="background:;">
   <hgroup>
     <h2>窗口函数</h2>
   </hgroup>
@@ -1345,7 +1460,7 @@ delay &lt;- filter(delay, count &gt; 20, dist &lt; 2000)
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-63" style="background:;">
+<slide class="" id="slide-67" style="background:;">
   <article data-timings="">
     <pre><code class="r">library(Lahman)
 batting &lt;- select(tbl_df(Batting), playerID, yearID, teamID, G, AB:H) 
@@ -1365,7 +1480,7 @@ filter(players, G &gt; lag(G))
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark" id="slide-64" style="background:;">
+<slide class="segue dark" id="slide-68" style="background:;">
   <hgroup>
     <h2>数据科学中的其他课题</h2>
   </hgroup>
@@ -1375,7 +1490,7 @@ filter(players, G &gt; lag(G))
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-65" style="background:;">
+<slide class="" id="slide-69" style="background:;">
   <hgroup>
     <h2>缺失值处理和异常值检测</h2>
   </hgroup>
@@ -1401,7 +1516,7 @@ filter(players, G &gt; lag(G))
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="segue dark" id="slide-66" style="background:;">
+<slide class="segue dark" id="slide-70" style="background:;">
   <hgroup>
     <h2>直观的了解数据:ggplot2</h2>
   </hgroup>
@@ -1411,7 +1526,7 @@ filter(players, G &gt; lag(G))
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-67" style="background:;">
+<slide class="" id="slide-71" style="background:;">
   <article data-timings="">
     <pre><code class="r">library(ggplot2)
 ggplot(mpg,aes(hwy,cty)) +
@@ -1421,26 +1536,26 @@ ggplot(mpg,aes(hwy,cty)) +
   theme_bw()
 </code></pre>
 
-<p><img src="assets/fig/unnamed-chunk-54-1.png" alt="plot of chunk unnamed-chunk-54"> </p>
+<p><img src="assets/fig/unnamed-chunk-57-1.png" alt="plot of chunk unnamed-chunk-57"> </p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-68" style="background:;">
+<slide class="" id="slide-72" style="background:;">
   <article data-timings="">
     <pre><code class="r">ggplot(mpg,aes(hwy,cty)) +
   geom_point(aes(color =as.factor(cyl))) +
   geom_smooth(aes(color = as.factor(cyl)),method = &#39;lm&#39;)
 </code></pre>
 
-<p><img src="assets/fig/unnamed-chunk-55-1.png" alt="plot of chunk unnamed-chunk-55"> </p>
+<p><img src="assets/fig/unnamed-chunk-58-1.png" alt="plot of chunk unnamed-chunk-58"> </p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-69" style="background:;">
+<slide class="" id="slide-73" style="background:;">
   <article data-timings="">
     <ul>
 <li>ggplot(data,aes(x,y,...))</li>
@@ -1461,43 +1576,47 @@ ggplot(mpg,aes(hwy,cty)) +
 </ul></li>
 </ul>
 
-<hr>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
 
-<pre><code class="r">ggplot(mtcars) +
+<slide class="" id="slide-74" style="background:;">
+  <article data-timings="">
+    <pre><code class="r">ggplot(mtcars) +
   geom_histogram(aes(mpg),binwidth = 2)
 </code></pre>
 
-<p><img src="assets/fig/unnamed-chunk-56-1.png" alt="plot of chunk unnamed-chunk-56"> </p>
+<p><img src="assets/fig/unnamed-chunk-60-1.png" alt="plot of chunk unnamed-chunk-60"> </p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-70" style="background:;">
+<slide class="" id="slide-75" style="background:;">
   <article data-timings="">
     <pre><code class="r">ggplot(mtcars) + 
   geom_bar(aes(as.factor(cyl),fill = as.factor(gear)))
 </code></pre>
 
-<p><img src="assets/fig/unnamed-chunk-57-1.png" alt="plot of chunk unnamed-chunk-57"> </p>
+<p><img src="assets/fig/unnamed-chunk-61-1.png" alt="plot of chunk unnamed-chunk-61"> </p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-71" style="background:;">
+<slide class="" id="slide-76" style="background:;">
   <article data-timings="">
     <pre><code class="r">ggplot(mtcars) + 
   geom_bar(aes(as.factor(cyl),fill = as.factor(gear)),position = &quot;fill&quot;)
 </code></pre>
 
-<p><img src="assets/fig/unnamed-chunk-58-1.png" alt="plot of chunk unnamed-chunk-58"> </p>
+<p><img src="assets/fig/unnamed-chunk-62-1.png" alt="plot of chunk unnamed-chunk-62"> </p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-72" style="background:;">
+<slide class="" id="slide-77" style="background:;">
   <article data-timings="">
     <pre><code class="r">data &lt;- table(as.factor(mtcars$cyl),as.factor(mtcars$gear))
 data 
@@ -1523,36 +1642,42 @@ head(data)
 ## 6    8    4    0
 </code></pre>
 
-<pre><code class="r">ggplot(data) + 
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-78" style="background:;">
+  <article data-timings="">
+    <pre><code class="r">ggplot(data) + 
   geom_bar(aes(x= Var1,y = Freq,fill =Var2),stat = &quot;identity&quot;)
 </code></pre>
 
-<p><img src="assets/fig/unnamed-chunk-59-1.png" alt="plot of chunk unnamed-chunk-59"> </p>
+<p><img src="assets/fig/unnamed-chunk-64-1.png" alt="plot of chunk unnamed-chunk-64"> </p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-73" style="background:;">
+<slide class="" id="slide-79" style="background:;">
   <article data-timings="">
     <pre><code class="r">ggplot(mtcars) +
   geom_boxplot(aes(x = as.factor(cyl),y = mpg))
 </code></pre>
 
-<p><img src="assets/fig/unnamed-chunk-60-1.png" alt="plot of chunk unnamed-chunk-60"> </p>
+<p><img src="assets/fig/unnamed-chunk-65-1.png" alt="plot of chunk unnamed-chunk-65"> </p>
 
   </article>
   <!-- Presenter Notes -->
 </slide>
 
-<slide class="" id="slide-74" style="background:;">
+<slide class="" id="slide-80" style="background:;">
   <article data-timings="">
     <pre><code class="r">ggplot(mtcars) +
   geom_point(aes(x = mpg,y = disp,color = as.factor(vs))) +
   facet_grid(cyl~gear)
 </code></pre>
 
-<p><img src="assets/fig/unnamed-chunk-61-1.png" alt="plot of chunk unnamed-chunk-61"> </p>
+<p><img src="assets/fig/unnamed-chunk-66-1.png" alt="plot of chunk unnamed-chunk-66"> </p>
 
   </article>
   <!-- Presenter Notes -->
@@ -1606,331 +1731,331 @@ head(data)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=8 title='R中的管道操作'>
+        data-slide=8 title='FP的效率'>
          8
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=9 title='管道操作'>
+        data-slide=9 title='R中的管道操作'>
          9
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=10 title='自定义的管道'>
+        data-slide=10 title='管道操作'>
          10
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=11 title='NA'>
+        data-slide=11 title='自定义的管道'>
          11
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=12 title='R apply家族'>
+        data-slide=12 title='NA'>
          12
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=13 title='替代for的高效函数'>
+        data-slide=13 title='R apply家族'>
          13
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=14 title='apply(X,margin,FUN)'>
+        data-slide=14 title='替代for的高效函数'>
          14
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=15 title='lapply(X,FUN)和sapply(X,FUN)'>
+        data-slide=15 title='apply(X,margin,FUN)'>
          15
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=16 title='NA'>
+        data-slide=16 title='lapply(X,FUN)和sapply(X,FUN)'>
          16
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=17 title='Mapply(FUN,....,MoreArg = ,....)'>
+        data-slide=17 title='NA'>
          17
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=18 title='rollapply'>
+        data-slide=18 title='Mapply(FUN,....,MoreArg = ,....)'>
          18
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=19 title='bootstrap 抽样'>
+        data-slide=19 title='rollapply'>
          19
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=20 title='R的数据获取，web scraping'>
+        data-slide=20 title='案例1：bootstrap 抽样'>
          20
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=21 title='NA'>
+        data-slide=21 title='案例2：担保链分析中的递归'>
          21
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=22 title='结构化网页数据抓取:XML package'>
+        data-slide=22 title='NA'>
          22
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=23 title='非结构化数据的获取:rvest package'>
+        data-slide=23 title='NA'>
          23
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=24 title='特征工程和数据预处理'>
+        data-slide=24 title='R的数据获取，web scraping'>
          24
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=25 title='reshape2'>
+        data-slide=25 title='NA'>
          25
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=26 title='数据的两种形状'>
+        data-slide=26 title='结构化网页数据抓取:XML package'>
          26
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=27 title='数据的两种形状'>
+        data-slide=27 title='非结构化数据的获取:rvest package'>
          27
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=28 title='数据重塑计算'>
+        data-slide=28 title='特征工程和数据预处理'>
          28
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=29 title='数据重塑计算'>
+        data-slide=29 title='reshape2'>
          29
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=30 title='数据重塑计算'>
+        data-slide=30 title='数据的两种形状'>
          30
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=31 title='小练习'>
+        data-slide=31 title='数据的两种形状'>
          31
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=32 title='dcast函数的使用前提'>
+        data-slide=32 title='数据重塑计算'>
          32
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=33 title='更复杂的需求'>
+        data-slide=33 title='数据重塑计算'>
          33
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=34 title='更复杂的需求'>
+        data-slide=34 title='数据重塑计算'>
          34
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=35 title='时间相关数据的类别'>
+        data-slide=35 title='小练习'>
          35
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=36 title='时间类对象'>
+        data-slide=36 title='dcast函数的使用前提'>
          36
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=37 title='Date类型'>
+        data-slide=37 title='更复杂的需求'>
          37
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=38 title='Date类型'>
+        data-slide=38 title='更复杂的需求'>
          38
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=39 title='Date类型'>
+        data-slide=39 title='时间相关数据的类别'>
          39
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=40 title='POSIXct类型'>
+        data-slide=40 title='时间类对象'>
          40
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=41 title='POSIXct类型'>
+        data-slide=41 title='Date类型'>
          41
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=42 title='字符串处理'>
+        data-slide=42 title='Date类型'>
          42
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=43 title='字符串处理概要'>
+        data-slide=43 title='Date类型'>
          43
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=44 title='获取字符串长度'>
+        data-slide=44 title='POSIXct类型'>
          44
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=45 title='字符串分割'>
+        data-slide=45 title='POSIXct类型'>
          45
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=46 title='字符串拼接'>
+        data-slide=46 title='字符串处理'>
          46
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=47 title='字符串截取'>
+        data-slide=47 title='字符串处理概要'>
          47
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=48 title='字符串替代'>
+        data-slide=48 title='获取字符串长度'>
          48
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=49 title='字符串匹配'>
+        data-slide=49 title='字符串分割'>
          49
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=50 title='dplyr(<a href="http://hadley.nz/">hadley</a>)'>
+        data-slide=50 title='字符串拼接'>
          50
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=51 title='NA'>
+        data-slide=51 title='字符串截取'>
          51
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=52 title='NA'>
+        data-slide=52 title='字符串替代'>
          52
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=53 title='filter() 和slice()'>
+        data-slide=53 title='字符串匹配'>
          53
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=54 title='arrange'>
+        data-slide=54 title='dplyr(<a href="http://hadley.nz/">hadley</a>)'>
          54
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=55 title='select() (and rename())'>
+        data-slide=55 title='NA'>
          55
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=56 title='distinct()'>
+        data-slide=56 title='NA'>
          56
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=57 title='mutate() (and transmute())'>
+        data-slide=57 title='filter() 和slice()'>
          57
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=58 title='summarise()'>
+        data-slide=58 title='arrange'>
          58
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=59 title='NA'>
+        data-slide=59 title='select() (and rename())'>
          59
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=60 title='group operations'>
+        data-slide=60 title='distinct()'>
          60
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=61 title='chain'>
+        data-slide=61 title='mutate() (and transmute())'>
          61
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=62 title='窗口函数'>
+        data-slide=62 title='summarise()'>
          62
       </a>
     </li>
@@ -1942,19 +2067,19 @@ head(data)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=64 title='数据科学中的其他课题'>
+        data-slide=64 title='group operations'>
          64
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=65 title='缺失值处理和异常值检测'>
+        data-slide=65 title='chain'>
          65
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=66 title='直观的了解数据:ggplot2'>
+        data-slide=66 title='窗口函数'>
          66
       </a>
     </li>
@@ -1966,19 +2091,19 @@ head(data)
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=68 title='NA'>
+        data-slide=68 title='数据科学中的其他课题'>
          68
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=69 title='NA'>
+        data-slide=69 title='缺失值处理和异常值检测'>
          69
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=70 title='NA'>
+        data-slide=70 title='直观的了解数据:ggplot2'>
          70
       </a>
     </li>
@@ -2004,6 +2129,42 @@ head(data)
       <a href="#" target="_self" rel='tooltip' 
         data-slide=74 title='NA'>
          74
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=75 title='NA'>
+         75
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=76 title='NA'>
+         76
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=77 title='NA'>
+         77
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=78 title='NA'>
+         78
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=79 title='NA'>
+         79
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=80 title='NA'>
+         80
       </a>
     </li>
   </ul>

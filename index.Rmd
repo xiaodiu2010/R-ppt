@@ -116,6 +116,24 @@ compute_mean$sum()
 compute_mean[["sum"]]()
 ```
 
+---
+## FP的效率
+
+```{r}
+x <- c()
+system.time({
+    for(i in 1:100000){
+      if(i %% 2 ==0)
+        x <- c(x,i)
+    } 
+})
+system.time({
+  x <- 1:100000
+  x[x %% 2 == 0]
+})
+```
+
+
 --- .segue .dark
 
 ## R中的管道操作
@@ -233,9 +251,9 @@ rollapply(z, 2, sum)
 ```
 
 ---
-## bootstrap 抽样
+## 案例1：bootstrap 抽样
 
-```{r,eval=FALSE}
+```{r}
 boot_lm <- function(formula,data,...){
     function(){
       lm(formula = formula,
@@ -244,10 +262,66 @@ boot_lm <- function(formula,data,...){
 }
 
 iris_boot <- boot_lm(Sepal.Length ~ Petal.Length,iris)
-bstrap <- sapply(X= 1:10000,
+bstrap <- sapply(X= 1:1000,
                  FUN = function(x) iris_boot()$coef)
 apply(bstrap,MARGIN = 1,FUN = quantile,prob =c(0.025,0.5,0.975))
 ```
+
+---
+## 案例2：担保链分析中的递归
+
+```{r,eval=FALSE}
+findCon = function(uid,friends.connected,friends.whole){
+  tmp=c()
+  for(i in friends.connected){
+    for(j in 1:length(i)){
+      tmp1 = unique(rbind(friends.whole[friends.whole$to == i[j],],friends.whole[friends.whole$from == i[j],]))
+      tmp = unique(rbind(tmp,tmp1))
+    }
+  }
+  if(dim(unique(rbind(tmp,friends.connected)))[1] == dim(friends.connected)[1]){
+    return(friends.connected)
+  }else {
+    friends.connected=unique(rbind(tmp,friends.connected))
+    findCon(uid, friends.connected,friends.whole)
+  }
+}
+uid="20111214000138"
+system.time({
+friends.connected = unique(rbind(friends.whole[friends.whole$to ==uid,],friends.whole[friends.whole$from == uid,]))
+friends.1=findCon(uid,friends.connected,friends.whole)
+friends.1=friends.1[complete.cases(friends.1),]
+})
+```
+
+---
+
+```{r,eval=FALSE}
+friends.whole<-read.table("data.csv",header=T,sep=",",col.names=c("from","to"))
+findCon1 = function(friends.connected,friends.whole){
+  index <- 1:nrow(friends.whole)
+  len1 <- nrow(as.data.frame(friends.connected))
+  index_target <- unique(unlist(as.list((friends.connected))))
+  tmp <- sapply(friends.whole,function(x,y) y[x %in% index_target],index) %>%
+                unlist() %>%
+                unique()
+  friends.connected <- friends.whole[tmp,]
+  if(nrow(friends.connected) == len1){
+    return(friends.connected)
+  }else {
+    findCon1(friends.connected,friends.whole)
+  }
+}
+uid="20111214000138"
+system.time({friends.1=findCon1(uid,friends.whole) %>%
+            unique()
+})
+```
+
+---
+
+![效果对比](./assets/fig/xiaoguo.png)
+
 
 --- .segue .dark
 
@@ -721,6 +795,10 @@ ggplot(mpg,aes(hwy,cty)) +
   - facet_grid(x~y) 
   - facet_warp(~x)
   
+```{r}
+
+```
+
 ---
 
 ```{r}
@@ -749,6 +827,11 @@ data <- table(as.factor(mtcars$cyl),as.factor(mtcars$gear))
 data 
 data <- as.data.frame(data)
 head(data)
+```
+
+---
+
+```{r}
 ggplot(data) + 
   geom_bar(aes(x= Var1,y = Freq,fill =Var2),stat = "identity")
 ```

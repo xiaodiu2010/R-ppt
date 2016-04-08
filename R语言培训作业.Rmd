@@ -75,3 +75,4 @@ boostrap <- function(formula,data,n,fun = c("lm","glm"),...){
 
 ## 发散思维题(optional)：找到一只你喜欢的队伍的历史数据和球员数据，从数据分析的角度，分析一下如何通过调整人员配置，调整战术策略来提高每个队伍的胜率
 
+![效果对比](./assets/fig/xiaoguo.png)

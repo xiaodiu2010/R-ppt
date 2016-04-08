@@ -112,6 +112,38 @@ compute_mean$sum()
 compute_mean[["sum"]]()
 ```
 
+---
+## FP的效率
+
+
+```r
+x <- c()
+system.time({
+    for(i in 1:100000){
+      if(i %% 2 ==0)
+        x <- c(x,i)
+    } 
+})
+```
+
+```
+##    user  system elapsed 
+##   4.475   0.608   5.089
+```
+
+```r
+system.time({
+  x <- 1:100000
+  x[x %% 2 == 0]
+})
+```
+
+```
+##    user  system elapsed 
+##   0.002   0.001   0.003
+```
+
+
 --- .segue .dark
 
 ## R中的管道操作
@@ -157,7 +189,7 @@ rnorm(10000,mean=10,sd=1) %>>%
     main=sprintf("length: %d",length(.)))
 ```
 
-![plot of chunk unnamed-chunk-7](assets/fig/unnamed-chunk-7-1.png) 
+![plot of chunk unnamed-chunk-8](assets/fig/unnamed-chunk-8-1.png) 
 
 --- .segue .dark
 
@@ -273,16 +305,28 @@ paste0(res,test)
 
 ```r
 library(zoo)
+```
+
+```
+## 
+## Attaching package: 'zoo'
+## 
+## The following objects are masked from 'package:base':
+## 
+##     as.Date, as.Date.numeric
+```
+
+```r
 z <- rnorm(6)
 rollapply(z, 2, sum)
 ```
 
 ```
-## [1] -1.6605202 -3.6657001 -1.3068213  1.1257449  0.8592158
+## [1]  0.8225873  2.0785559 -0.6813391 -1.9719372 -0.4199782
 ```
 
 ---
-## bootstrap 抽样
+## 案例1：bootstrap 抽样
 
 
 ```r
@@ -294,10 +338,75 @@ boot_lm <- function(formula,data,...){
 }
 
 iris_boot <- boot_lm(Sepal.Length ~ Petal.Length,iris)
-bstrap <- sapply(X= 1:10000,
+bstrap <- sapply(X= 1:1000,
                  FUN = function(x) iris_boot()$coef)
 apply(bstrap,MARGIN = 1,FUN = quantile,prob =c(0.025,0.5,0.975))
 ```
+
+```
+##       (Intercept) Petal.Length
+## 2.5%     4.163022    0.3718770
+## 50%      4.305461    0.4095615
+## 97.5%    4.446607    0.4439611
+```
+
+---
+## 案例2：担保链分析中的递归
+
+
+```r
+findCon = function(uid,friends.connected,friends.whole){
+  tmp=c()
+  for(i in friends.connected){
+    for(j in 1:length(i)){
+      tmp1 = unique(rbind(friends.whole[friends.whole$to == i[j],],friends.whole[friends.whole$from == i[j],]))
+      tmp = unique(rbind(tmp,tmp1))
+    }
+  }
+  if(dim(unique(rbind(tmp,friends.connected)))[1] == dim(friends.connected)[1]){
+    return(friends.connected)
+  }else {
+    friends.connected=unique(rbind(tmp,friends.connected))
+    findCon(uid, friends.connected,friends.whole)
+  }
+}
+uid="20111214000138"
+system.time({
+friends.connected = unique(rbind(friends.whole[friends.whole$to ==uid,],friends.whole[friends.whole$from == uid,]))
+friends.1=findCon(uid,friends.connected,friends.whole)
+friends.1=friends.1[complete.cases(friends.1),]
+})
+```
+
+---
+
+
+```r
+friends.whole<-read.table("data.csv",header=T,sep=",",col.names=c("from","to"))
+findCon1 = function(friends.connected,friends.whole){
+  index <- 1:nrow(friends.whole)
+  len1 <- nrow(as.data.frame(friends.connected))
+  index_target <- unique(unlist(as.list((friends.connected))))
+  tmp <- sapply(friends.whole,function(x,y) y[x %in% index_target],index) %>%
+                unlist() %>%
+                unique()
+  friends.connected <- friends.whole[tmp,]
+  if(nrow(friends.connected) == len1){
+    return(friends.connected)
+  }else {
+    findCon1(friends.connected,friends.whole)
+  }
+}
+uid="20111214000138"
+system.time({friends.1=findCon1(uid,friends.whole) %>%
+            unique()
+})
+```
+
+---
+
+![效果对比](./assets/fig/xiaoguo.png)
+
 
 --- .segue .dark
 
@@ -1082,7 +1191,7 @@ ggplot(mpg,aes(hwy,cty)) +
   theme_bw()
 ```
 
-![plot of chunk unnamed-chunk-54](assets/fig/unnamed-chunk-54-1.png) 
+![plot of chunk unnamed-chunk-57](assets/fig/unnamed-chunk-57-1.png) 
 
 ---
 
@@ -1093,7 +1202,7 @@ ggplot(mpg,aes(hwy,cty)) +
   geom_smooth(aes(color = as.factor(cyl)),method = 'lm')
 ```
 
-![plot of chunk unnamed-chunk-55](assets/fig/unnamed-chunk-55-1.png) 
+![plot of chunk unnamed-chunk-58](assets/fig/unnamed-chunk-58-1.png) 
 
 ---
 
@@ -1108,6 +1217,8 @@ ggplot(mpg,aes(hwy,cty)) +
   - facet_grid(x~y) 
   - facet_warp(~x)
   
+
+
 ---
 
 
@@ -1116,7 +1227,7 @@ ggplot(mtcars) +
   geom_histogram(aes(mpg),binwidth = 2)
 ```
 
-![plot of chunk unnamed-chunk-56](assets/fig/unnamed-chunk-56-1.png) 
+![plot of chunk unnamed-chunk-60](assets/fig/unnamed-chunk-60-1.png) 
 
 ---
 
@@ -1126,7 +1237,7 @@ ggplot(mtcars) +
   geom_bar(aes(as.factor(cyl),fill = as.factor(gear)))
 ```
 
-![plot of chunk unnamed-chunk-57](assets/fig/unnamed-chunk-57-1.png) 
+![plot of chunk unnamed-chunk-61](assets/fig/unnamed-chunk-61-1.png) 
 
 ---
 
@@ -1136,7 +1247,7 @@ ggplot(mtcars) +
   geom_bar(aes(as.factor(cyl),fill = as.factor(gear)),position = "fill")
 ```
 
-![plot of chunk unnamed-chunk-58](assets/fig/unnamed-chunk-58-1.png) 
+![plot of chunk unnamed-chunk-62](assets/fig/unnamed-chunk-62-1.png) 
 
 ---
 
@@ -1169,12 +1280,15 @@ head(data)
 ## 6    8    4    0
 ```
 
+---
+
+
 ```r
 ggplot(data) + 
   geom_bar(aes(x= Var1,y = Freq,fill =Var2),stat = "identity")
 ```
 
-![plot of chunk unnamed-chunk-59](assets/fig/unnamed-chunk-59-1.png) 
+![plot of chunk unnamed-chunk-64](assets/fig/unnamed-chunk-64-1.png) 
 
 ---
 
@@ -1184,7 +1298,7 @@ ggplot(mtcars) +
   geom_boxplot(aes(x = as.factor(cyl),y = mpg))
 ```
 
-![plot of chunk unnamed-chunk-60](assets/fig/unnamed-chunk-60-1.png) 
+![plot of chunk unnamed-chunk-65](assets/fig/unnamed-chunk-65-1.png) 
 
 ---
 
@@ -1195,7 +1309,7 @@ ggplot(mtcars) +
   facet_grid(cyl~gear)
 ```
 
-![plot of chunk unnamed-chunk-61](assets/fig/unnamed-chunk-61-1.png) 
+![plot of chunk unnamed-chunk-66](assets/fig/unnamed-chunk-66-1.png) 
 
 
   
